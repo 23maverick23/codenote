@@ -1,0 +1,39 @@
+html,
+body {
+  margin: 0;
+}
+body {
+  background-color: #e0e0e0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  overflow: hidden;
+}
+.container {
+  width: 500px;
+}
+.navbar-default {
+  background-color: #e0e0e0;
+  border-bottom: none;
+}
+.navbar-default .navbar-collapse {
+  padding-right: 0;
+  padding-left: 0;
+}
+.navbar-default #codeNoteSyntaxMode .dropdown-menu {
+  max-height: 275px;
+  overflow-y: scroll;
+}
+.modal-body {
+  padding-bottom: 0;
+}
+#codeNoteEditorContainer {
+  padding: 10px;
+}
+#codeNoteEditorContainer #editor {
+  margin: 10px 15px 5px;
+  position: absolute;
+  height: 305px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border: 1px solid #b4b7b4;
+}
