@@ -19,10 +19,13 @@
     editor.setValue(editorvalue, 0);
     editor.getSession().setMode("ace/mode/" + editorsyntax);
 
+    var optionsUrl = chrome.extension.getURL("options.html");
+    $('#codeNoteOptions').attr('href', optionsUrl);
 
     // update syntax mode dropdown
     function updateSyntaxModeDropdown(syntax) {
         var acemodeDropdownItem = $('#codeNoteSyntaxMode li[data-acemode="' + syntax + '"] a');
+        var acemodeext = acemodeDropdownItem.parent().data('acemodeext');
         var acemodeText = acemodeDropdownItem.html();
         var acemodeDropdown = $('#codeNoteSyntaxModeText');
         acemodeDropdown.html(acemodeText);
@@ -31,6 +34,9 @@
             $(this).removeClass('active');
         })
         acemodeDropdownItem.parent().addClass('active');
+
+        $('#codeNoteModalFilename').attr('placeholder', 'name_your_file.' + acemodeext);
+
         $('#editor textarea').focus();
     }
 
@@ -58,10 +64,21 @@
         $(this).tooltip();
     });
 
+    var form = $('#codeNoteGistForm');
+
     // initiate modal for gist posts
     $('#codeNodeGistModal').modal({
         keyboard: true,
         show: false
+    });
+
+    // clear all values on hide
+    $('#codeNodeGistModal').on('hidden.bs.modal', function () {
+        $('#codeNoteGistIcon').removeClass('fa-external-link fa-spinner fa-spin');
+        $('#codeNoteGistUrl').attr('href', '#');
+        $('#codeNoteGistUrl').html('');
+        $('#codeNoteModalFilename').val('');
+        $('#codeNoteModalDescription').val('');
     });
 
     // show modal on click
@@ -89,35 +106,69 @@
         }
     }
 
-    store.set('codeNote.options.gisttoken', '8ab3cb8af303aef00eacc6a8c6340ed717ab38f6');
-    var OAUTH_TOKEN = store.get('codeNote.options.gisttoken');
+    $("#codeNoteSecret").bind("click keypress", function () {
+        // store the id of the submit-input on it's enclosing form
+        form.data("callerid", this.id);
+    });
 
-    var jsoncontent = {
-        "description": "test gist",
-        "public": true,
-        "files": {
-            "file1.txt": {
-                "content": $('#editor textarea').val()
-            }
-        }
-    };
+    $("#codeNotePublic").bind("click keypress", function () {
+        // store the id of the submit-input on it's enclosing form
+        form.data("callerid", this.id);
+    });
 
-    // send data to github
-    $('#codeNoteGistCreateSecret').on('click', function(e) {
-        e.preventDefault();
-        console.log('Clicked');
-        $.ajax({
-            url: 'https://api.github.com/gists',
-            dataType: 'json',
-            data: jsoncontent,
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader ("Authorization", "token" + OAUTH_TOKEN);
+    // submit gist via ajax API
+    form.submit(function() {
+        var codeNoteGistIcon = $('#codeNoteGistIcon');
+        codeNoteGistIcon.addClass('fa-spinner fa-spin');
+
+        var callerId = ($(this).data("callerid") || 'codeNotePublic');
+
+        var ghPublic = (callerId && callerId == 'codeNotePublic') ? true : false;
+        var ghUrl = 'https://api.github.com/gists';
+        var ghContent = editor.getSession().getValue();
+        var ghFilename = $('#codeNoteModalFilename').val();
+        var ghDescription = $('#codeNoteModalDescription').val();
+        var OAUTH_TOKEN = store.get('codeNote.options.gisttoken');
+
+        var jsoncontent = {
+            "description": ghDescription,
+            "public": ghPublic,
+            "files": {}
+        };
+        jsoncontent.files[ghFilename] = { "content": ghContent };
+
+        //perform the ajax request to github
+        $.ajax(ghUrl, {
+            type: 'POST',
+            crossDomain: true,
+            data: JSON.stringify(jsoncontent),
+            beforeSend: function(xhr){
+                xhr.setRequestHeader('Authorization', 'token ' + OAUTH_TOKEN);
+                xhr.setRequestHeader('Accept', 'application/json');
+                xhr.setRequestHeader('Content-Type', 'application/json');
             },
-        })
-        .done(function(data) {
-            if (console && console.log) {
-              console.log("Sample of data:", data.slice(0, 100));
+            success: function(data, status, response) {
+                codeNoteGistIcon.removeClass('fa-spinner fa-spin');
+                codeNoteGistIcon.addClass('fa-external-link');
+
+                var gUrl = data.html_url;
+                var codeNoteGistUrl = $('#codeNoteGistUrl');
+                codeNoteGistUrl.attr('href', gUrl);
+                codeNoteGistUrl.html(gUrl);
+
+                // DEBUG
+                // console.log(JSON.stringify(data));
+            },
+            error: function(response, status, error) {
+                if (response.responseText.length > 0) {
+                    var data = JSON.parse(response.responseText);
+                    if (data.message) {
+                        console.log(data.message);
+                    }
+                }
             }
         });
+
+        return false;
     });
 }());

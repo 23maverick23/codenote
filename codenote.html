@@ -24,10 +24,10 @@
 
                 <ul id="codeNoteToolbar" class="nav navbar-nav">
                     <li>
-                        <a href="#" id="codeNoteToolbarSelectAll" data-toggle="tooltip" data-placement="right" data-container="body" title="Select all content"><i class="fa fa-clipboard fa-lg"></i></a>
+                        <a href="#" id="codeNoteToolbarSelectAll" data-toggle="tooltip" data-placement="right" data-container="body" title="Select all content"><i class="fa fa-clipboard fa-lg"></i> Select all</a>
                     </li>
                     <li>
-                        <a href="#" id="codeNoteToolbarGist" data-toggle="tooltip" data-placement="right" data-container="body" data-toggle="modal" title="Create new gist"><i class="fa fa-github-alt fa-lg"></i></a>
+                        <a href="#" id="codeNoteToolbarGist" data-toggle="tooltip" data-placement="right" data-container="body" data-toggle="modal" title="Create new gist"><i class="fa fa-github-alt fa-lg"></i> Gist</a>
                     </li>
                 </ul>
 
@@ -36,19 +36,19 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-file-code-o fa-lg"></i> <span id="codeNoteSyntaxModeText">Markdown</span> <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-header">Available modes</li>
-                            <li data-acemode="css"><a href="#">CSS</a></li>
-                            <li data-acemode="html"><a href="#">HTML</a></li>
-                            <li data-acemode="javascript"><a href="#">JavaScript</a></li>
-                            <li data-acemode="json"><a href="#">JSON</a></li>
-                            <li class="active" data-acemode="markdown"><a href="#">Markdown</a></li>
-                            <li data-acemode="plain_text"><a href="#">Plain Text</a></li>
-                            <li data-acemode="python"><a href="#">Python</a></li>
-                            <li data-acemode="sql"><a href="#">SQL</a></li>
-                            <li data-acemode="xml"><a href="#">XML</a></li>
+                            <li data-acemode="css" data-acemodeext="css"><a href="#">CSS</a></li>
+                            <li data-acemode="html" data-acemodeext="html"><a href="#">HTML</a></li>
+                            <li data-acemode="javascript" data-acemodeext="js"><a href="#">JavaScript</a></li>
+                            <li data-acemode="json" data-acemodeext="json"><a href="#">JSON</a></li>
+                            <li class="active" data-acemode="markdown" data-acemodeext="md"><a href="#">Markdown</a></li>
+                            <li data-acemode="plain_text" data-acemodeext="txt"><a href="#">Plain Text</a></li>
+                            <li data-acemode="python" data-acemodeext="py"><a href="#">Python</a></li>
+                            <li data-acemode="sql" data-acemodeext="sql"><a href="#">SQL</a></li>
+                            <li data-acemode="xml" data-acemodeext="xml"><a href="#">XML</a></li>
                         </ul>
                     </li>
                     <li>
-                        <a href="#" data-toggle="tooltip" data-placement="left" data-container="body" title="Configuration options"><i class="fa fa-cogs fa-lg"></i></a>
+                        <a id="codeNoteOptions" href="#" data-toggle="tooltip" data-placement="left" data-container="body" title="Configuration options" target="_blank"><i class="fa fa-cogs fa-lg"></i></a>
                     </li>
                 </ul>
             </div><!--/.nav-collapse -->
@@ -62,29 +62,29 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title" id="codeNodeGistModalLabel"><i class="fa fa-github-alt fa-lg"></i> Create Gist</h4>
+                        <h4 class="modal-title"><i class="fa fa-github-alt fa-lg"></i> Create Gist</h4>
                     </div>
-                    <div class="modal-body">
-                        <form class="form" role="form">
+                    <form class="form" role="form" id="codeNoteGistForm">
+                        <div class="modal-body">
                             <div class="form-group">
                                 <label for="filename">Filename</label>
-                                <input type="text" class="form-control" id="codeNoteModalFilename" placeholder="filename.md">
+                                <input type="text" class="form-control" id="codeNoteModalFilename" placeholder="name_your_file.md">
                             </div>
                             <div class="form-group">
                                 <label for="description">Description</label>
-                                <input type="text" class="form-control" id="codeNoteModalDescription" placeholder="Description...">
+                                <input type="text" class="form-control" id="codeNoteModalDescription" placeholder="optional gist description...">
                             </div>
                             <div class="form-group">
                                 <p class="form-control-static">
-                                    <i class="fa fa-external-link fa-lg"></i> <a id="codeNoteGistUrl" href="#">https://api.github.com/gists/94078be7eceef1cd115a</a>
+                                    <i id="codeNoteGistIcon" class="fa fa-lg"></i> <a id="codeNoteGistUrl" href="#" target="_blank"></a>
                                 </p>
                             </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-warning">Create Secret Gist</button>
-                        <button type="button" class="btn btn-default">Create Public Gist</button>
-                    </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-warning" name="codeNoteSecret" id="codeNoteSecret">Create Secret Gist</button>
+                            <button type="submit" class="btn btn-default" name="codeNotePublic" id="codeNotePublic">Create Public Gist</button>
+                        </div>
+                    </form>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
